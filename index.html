@@ -1,0 +1,1157 @@
+<!doctype html>
+<html lang="pt-BR">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <title>StudyFlow</title>
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
+    rel="stylesheet"
+  >
+
+  <link rel="stylesheet" href="css/style.css">
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+
+<body>
+
+  <!-- TOAST -->
+  <div id="toast" class="toast" role="status" aria-live="polite" aria-atomic="true">
+  <div class="toast-icon" id="toast-icon">✓</div>
+  <div class="toast-content">
+    <strong id="toast-title">Concluído</strong>
+    <span id="toast-message"></span>
+  </div>
+  <button class="toast-close" id="toast-close" type="button" aria-label="Fechar notificação">×</button>
+</div>
+
+
+  <!-- =========================
+       LOGIN / CADASTRO
+  ========================== -->
+
+  <section id="auth" class="auth">
+
+    <div class="card authcard">
+
+      <div class="brand">
+        <i>S</i>
+        <b>StudyFlow</b>
+      </div>
+
+      <p>SEU PAINEL DE ESTUDOS</p>
+
+      <h1 id="auth-title">
+        Estude melhor. Entregue no prazo.
+      </h1>
+
+      <form id="auth-form">
+
+        <input
+          id="email"
+          type="email"
+          placeholder="E-mail"
+          required
+        >
+
+        <input
+          id="password"
+          type="password"
+          minlength="6"
+          placeholder="Senha"
+          required
+        >
+
+        <button type="submit">
+          Entrar
+        </button>
+
+      </form>
+
+      <button class="link" id="toggle">
+        Ainda não tenho uma conta
+      </button>
+
+    </div>
+
+  </section>
+
+
+  <!-- =========================
+       APLICAÇÃO
+  ========================== -->
+
+  <div id="app" class="hidden">
+
+
+    <!-- =========================
+         SIDEBAR
+    ========================== -->
+
+    <aside class="sidebar">
+
+      <!-- LOGO -->
+
+      <div class="sidebar-top">
+
+        <div class="brand">
+          <i>S</i>
+          <b>StudyFlow</b>
+        </div>
+
+        <span class="sidebar-label">
+          PAINEL DE ESTUDOS
+        </span>
+
+      </div>
+
+
+      <!-- NAVEGAÇÃO -->
+
+      <nav class="sidebar-nav">
+
+        <!-- PRINCIPAL -->
+
+        <div class="nav-group">
+
+          <span class="nav-title">
+            PRINCIPAL
+          </span>
+
+          <button
+            data-p="dashboard"
+            class="nav-item active"
+          >
+            <span class="nav-icon">⌂</span>
+            <span>Dashboard</span>
+          </button>
+
+          <button
+            data-p="tasks"
+            class="nav-item"
+          >
+            <span class="nav-icon">✓</span>
+            <span>Atividades</span>
+          </button>
+
+          <button
+            data-p="calendar"
+            class="nav-item"
+          >
+            <span class="nav-icon">▣</span>
+            <span>Calendário</span>
+          </button>
+
+        </div>
+
+
+        <!-- ESTUDOS -->
+
+        <div class="nav-group">
+
+          <span class="nav-title">
+            ESTUDOS
+          </span>
+
+          <button
+            data-p="tutor"
+            class="nav-item"
+          >
+            <span class="nav-icon">✦</span>
+            <span>Tutor IA</span>
+          </button>
+
+          <button
+            data-p="music"
+            class="nav-item"
+          >
+            <span class="nav-icon">♫</span>
+            <span>Música</span>
+          </button>
+
+        </div>
+
+
+        <!-- CONTA -->
+
+        <div class="nav-group">
+
+          <span class="nav-title">
+            CONTA
+          </span>
+
+          <button
+            data-p="settings"
+            class="nav-item"
+          >
+            <span class="nav-icon">⚙</span>
+            <span>Configurações</span>
+          </button>
+
+          <!-- ADMIN -->
+
+          <button
+            id="admin-nav"
+            class="nav-item hidden"
+            data-p="admin"
+          >
+            <span class="nav-icon">◆</span>
+            <span>Admin</span>
+          </button>
+
+        </div>
+
+      </nav>
+
+
+      <!-- USUÁRIO -->
+
+      <div class="sidebar-bottom">
+
+        <div class="user-box">
+
+          <div class="user-avatar">
+            <span>U</span>
+          </div>
+
+          <div class="user-info">
+
+            <strong>Minha conta</strong>
+
+            <small id="user-email"></small>
+
+          </div>
+
+        </div>
+
+        <button
+          id="logout"
+          class="logout-btn"
+        >
+          <span>↪</span>
+          Sair
+        </button>
+
+      </div>
+
+    </aside>
+
+
+    <!-- =========================
+         CONTEÚDO PRINCIPAL
+    ========================== -->
+
+    <main>
+
+
+      <!-- HEADER -->
+
+      <header>
+
+        <div>
+
+          <small>
+            STUDYFLOW
+          </small>
+
+          <h2 id="title">
+            Dashboard
+          </h2>
+
+        </div>
+
+        <button id="add">
+          ＋ Atividade
+        </button>
+
+      </header>
+
+
+      <!-- =========================
+           DASHBOARD
+      ========================== -->
+
+      <section
+        id="dashboard"
+        class="page"
+      >
+
+        <div class="dashboard-hero">
+
+          <div>
+
+            <span class="dashboard-kicker">
+              FOCO NO QUE IMPORTA
+            </span>
+
+            <h1>
+              Seu estudo, em ordem.
+            </h1>
+
+            <p>
+              Moodle, prazos, IA, música e foco em um só lugar.
+            </p>
+
+          </div>
+
+          <button
+            data-p="tutor"
+            class="dashboard-tutor-btn"
+          >
+            ✦ Perguntar ao Tutor
+          </button>
+
+        </div>
+
+
+        <!-- ESTATÍSTICAS -->
+
+        <div class="dashboard-stats">
+
+          <div class="dashboard-stat">
+
+            <div class="dashboard-stat-icon">
+              📚
+            </div>
+
+            <div>
+
+              <span>Pendentes</span>
+
+              <strong id="pending">
+                0
+              </strong>
+
+            </div>
+
+          </div>
+
+
+          <div class="dashboard-stat">
+
+            <div class="dashboard-stat-icon">
+              ✓
+            </div>
+
+            <div>
+
+              <span>Concluídas</span>
+
+              <strong id="done">
+                0
+              </strong>
+
+            </div>
+
+          </div>
+
+
+          <div class="dashboard-stat">
+
+            <div class="dashboard-stat-icon">
+              ⚡
+            </div>
+
+            <div>
+
+              <span>Próximas 48h</span>
+
+              <strong id="urgent">
+                0
+              </strong>
+
+            </div>
+
+          </div>
+
+
+          <div class="dashboard-stat">
+
+            <div class="dashboard-stat-icon">
+              ◈
+            </div>
+
+            <div>
+
+              <span>Total</span>
+
+              <strong id="total">
+                0
+              </strong>
+
+            </div>
+
+          </div>
+
+        </div>
+
+
+        <!-- GRID -->
+
+        <div class="dashboard-grid">
+
+
+          <!-- PRÓXIMAS ENTREGAS -->
+
+          <div class="dashboard-card dashboard-deliveries">
+
+            <div class="dashboard-card-header">
+
+              <div>
+
+                <span>
+                  ORGANIZAÇÃO
+                </span>
+
+                <h3>
+                  Próximas entregas
+                </h3>
+
+              </div>
+
+              <button
+                data-p="tasks"
+                class="dashboard-link"
+              >
+                Ver todas →
+              </button>
+
+            </div>
+
+            <div id="upcoming"></div>
+
+          </div>
+
+
+          <!-- POMODORO -->
+
+          <div class="dashboard-card dashboard-focus">
+
+            <div class="dashboard-card-header">
+
+              <div>
+
+                <span>
+                  CONCENTRAÇÃO
+                </span>
+
+                <h3>
+                  Pomodoro
+                </h3>
+
+              </div>
+
+              <div class="focus-symbol">
+                ⏱
+              </div>
+
+            </div>
+
+            <div
+              class="dashboard-timer"
+              id="timer"
+            >
+              25:00
+            </div>
+
+            <p class="dashboard-focus-text">
+              Concentre-se por 25 minutos.
+            </p>
+
+            <div class="dashboard-timer-buttons">
+
+              <button id="start">
+                Iniciar
+              </button>
+
+              <button id="reset">
+                Resetar
+              </button>
+
+            </div>
+
+          </div>
+
+        </div>
+
+
+        <!-- ACESSO RÁPIDO -->
+
+        <div class="dashboard-quick">
+
+          <div>
+
+            <span>
+              ACESSO RÁPIDO
+            </span>
+
+            <h3>
+              Continue seus estudos
+            </h3>
+
+          </div>
+
+          <div class="dashboard-quick-buttons">
+
+            <button data-p="tasks">
+              📚 Atividades
+            </button>
+
+            <button data-p="calendar">
+              📅 Calendário
+            </button>
+
+            <button data-p="music">
+              🎵 Música
+            </button>
+
+          </div>
+
+        </div>
+
+      </section>
+
+
+      <!-- =========================
+           ATIVIDADES
+      ========================== -->
+
+      <section
+        id="tasks"
+        class="page hidden"
+      >
+
+        <div class="head">
+
+          <div>
+
+            <small>
+              ORGANIZAÇÃO
+            </small>
+
+            <h1>
+              Atividades
+            </h1>
+
+          </div>
+
+          <button id="newtask">
+            ＋ Nova atividade
+          </button>
+
+        </div>
+
+
+        <div class="card">
+
+          <div class="task-toolbar">
+
+            <input
+              id="search"
+              class="wide"
+              type="text"
+              placeholder="Pesquisar atividade..."
+            >
+
+          </div>
+
+
+          <div id="list">
+
+            <div class="empty-state">
+
+              <div>
+                📚
+              </div>
+
+              <h3>
+                Nenhuma atividade
+              </h3>
+
+              <p>
+                Você ainda não cadastrou nenhuma atividade.
+              </p>
+
+            </div>
+
+          </div>
+
+        </div>
+
+      </section>
+
+
+      <!-- =========================
+           MODAL — NOVA ATIVIDADE
+      ========================== -->
+
+      <div
+        id="task-modal"
+        class="modal hidden"
+      >
+
+        <div
+          class="modal-overlay"
+          id="modal-overlay"
+        ></div>
+
+
+        <div class="modal-card">
+
+          <div class="modal-header">
+
+            <div>
+
+              <small>
+                ORGANIZAÇÃO
+              </small>
+
+              <h2>
+                Nova atividade
+              </h2>
+
+            </div>
+
+            <button
+              type="button"
+              id="close-modal"
+              class="modal-close"
+            >
+              ×
+            </button>
+
+          </div>
+
+
+          <form id="task-form">
+
+            <label for="task-title">
+              Nome da atividade
+            </label>
+
+            <input
+              id="task-title"
+              type="text"
+              placeholder="Ex.: Trabalho de História"
+              required
+            >
+
+
+            <label for="task-description">
+              Descrição
+            </label>
+
+            <textarea
+              id="task-description"
+              placeholder="Adicione uma descrição (opcional)..."
+            ></textarea>
+
+
+            <label for="task-date">
+              Data de entrega
+            </label>
+
+            <input
+              id="task-date"
+              type="date"
+            >
+
+
+            <div class="modal-actions">
+
+              <button
+                type="button"
+                id="cancel-task"
+                class="modal-cancel"
+              >
+                Cancelar
+              </button>
+
+              <button
+                type="submit"
+                class="modal-submit"
+              >
+                ✦ Criar atividade
+              </button>
+
+            </div>
+
+          </form>
+
+        </div>
+
+      </div>
+
+
+      <!-- CONFIRMAÇÃO DE EXCLUSÃO -->
+      <div id="confirm-modal" class="modal hidden" aria-hidden="true">
+        <div class="modal-overlay" id="confirm-overlay"></div>
+        <div class="modal-card confirm-card" role="dialog" aria-modal="true" aria-labelledby="confirm-title">
+          <div class="modal-header">
+            <div>
+              <small>ATENÇÃO</small>
+              <h2 id="confirm-title">Excluir atividade?</h2>
+            </div>
+            <button type="button" id="confirm-close" class="modal-close" aria-label="Fechar">×</button>
+          </div>
+          <p id="confirm-message" class="confirm-message">Esta ação não poderá ser desfeita.</p>
+          <div class="modal-actions">
+            <button type="button" id="confirm-cancel" class="modal-cancel">Cancelar</button>
+            <button type="button" id="confirm-ok" class="modal-submit confirm-danger">Excluir atividade</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- =========================
+           CALENDÁRIO
+      ========================== -->
+
+      <section
+        id="calendar"
+        class="page hidden"
+      >
+
+        <div class="head">
+
+          <div>
+
+            <small>
+              PLANEJAMENTO
+            </small>
+
+            <h1>
+              Calendário
+            </h1>
+
+          </div>
+
+        </div>
+
+
+        <div class="card calendar">
+
+          <h3 id="month"></h3>
+
+          <div id="cal"></div>
+
+        </div>
+
+      </section>
+
+
+      <!-- =========================
+           TUTOR IA
+      ========================== -->
+
+      <section
+        id="tutor"
+        class="page hidden"
+      >
+
+        <div class="head">
+
+          <div>
+
+            <small>
+              INTELIGÊNCIA ARTIFICIAL
+            </small>
+
+            <h1>
+              Tutor IA
+            </h1>
+
+          </div>
+
+        </div>
+
+
+        <div class="maintenance-card">
+
+          <div class="maintenance-icon">
+            🤖
+          </div>
+
+          <div class="maintenance-content">
+
+            <span class="maintenance-badge">
+              EM MANUTENÇÃO
+            </span>
+
+            <h1>
+              Tutor IA
+            </h1>
+
+            <p class="maintenance-description">
+              Estamos fazendo alguns ajustes para deixar o Tutor IA ainda melhor
+              para os seus estudos.
+            </p>
+
+
+            <div class="maintenance-info">
+
+              <div class="maintenance-info-icon">
+                ⚙️
+              </div>
+
+              <div>
+
+                <strong>
+                  Estamos trabalhando nisso
+                </strong>
+
+                <span>
+                  Em breve você poderá voltar a tirar dúvidas,
+                  receber explicações passo a passo e estudar
+                  com seu tutor virtual.
+                </span>
+
+              </div>
+
+            </div>
+
+
+            <div class="maintenance-progress">
+
+              <div class="maintenance-progress-top">
+
+                <span>
+                  Atualização do sistema
+                </span>
+
+                <span>
+                  Em andamento
+                </span>
+
+              </div>
+
+              <div class="maintenance-progress-bar">
+
+                <div></div>
+
+              </div>
+
+            </div>
+
+
+            <button
+              type="button"
+              class="maintenance-back"
+              data-p="dashboard"
+            >
+              ← Voltar ao Dashboard
+            </button>
+
+          </div>
+
+        </div>
+
+      </section>
+
+
+      <!-- =========================
+           MÚSICA
+      ========================== -->
+
+      <section
+        id="music"
+        class="page hidden"
+      >
+
+        <div class="head">
+
+          <div>
+
+            <small>
+              FOCO
+            </small>
+
+            <h1>
+              Study Music
+            </h1>
+
+          </div>
+
+        </div>
+
+
+        <div class="cols">
+
+
+          <!-- SPOTIFY -->
+
+          <div class="card">
+
+            <h3>
+              Spotify
+            </h3>
+
+            <p>
+              Cole uma URL de playlist, álbum ou música.
+            </p>
+
+            <input
+              id="spotify-url"
+              class="wide"
+              placeholder="https://open.spotify.com/..."
+            >
+
+            <button id="spotify-load">
+              Carregar
+            </button>
+
+            <div
+              id="player"
+              class="player"
+            >
+              Player aqui
+            </div>
+
+          </div>
+
+
+          <!-- PLAYLISTS -->
+
+          <div class="card">
+
+            <h3>
+              Playlists
+            </h3>
+
+
+            <button
+              class="musiclink"
+              data-url="https://open.spotify.com/playlist/37i9dQZF1DWZeKCadgRdKf"
+            >
+              Deep Focus
+            </button>
+
+
+            <button
+              class="musiclink"
+              data-url="https://open.spotify.com/playlist/37i9dQZF1DX4sWSpwq3LiO"
+            >
+              Peaceful Piano
+            </button>
+
+
+            <button
+              class="musiclink"
+              data-url="https://open.spotify.com/playlist/37i9dQZF1DWU0ScTcjJBdj"
+            >
+              Lofi Beats
+            </button>
+
+          </div>
+
+        </div>
+
+      </section>
+
+
+      <!-- =========================
+           CONFIGURAÇÕES
+      ========================== -->
+
+      <section
+        id="settings"
+        class="page hidden"
+      >
+
+        <div class="head">
+
+          <div>
+
+            <small>
+              CONFIGURAÇÕES
+            </small>
+
+            <h1>
+              Minha conta
+            </h1>
+
+          </div>
+
+        </div>
+
+
+        <div class="cols">
+
+
+          <!-- NOTIFICAÇÕES -->
+
+          <div class="card">
+
+            <h3>
+              Notificações
+            </h3>
+
+            <input
+              id="phone"
+              class="wide"
+              placeholder="+55 11 99999-9999"
+            >
+
+
+            <label>
+
+              <input
+                id="new-notify"
+                type="checkbox"
+                checked
+              >
+
+              Nova atividade
+
+            </label>
+
+
+            <label>
+
+              <input
+                id="due-notify"
+                type="checkbox"
+                checked
+              >
+
+              Perto do vencimento
+
+            </label>
+
+
+            <button id="save-notify">
+              Salvar
+            </button>
+
+          </div>
+
+
+          <!-- MOODLE -->
+
+          <div class="card">
+
+            <h3>
+              Moodle
+            </h3>
+
+            <p>
+              Informe a URL e o token liberado pela sua escola.
+            </p>
+
+            <input
+              id="moodle-url"
+              class="wide"
+              placeholder="https://moodle.suaescola.com"
+            >
+
+            <input
+              id="moodle-token"
+              class="wide"
+              type="password"
+              placeholder="Token Moodle"
+            >
+
+            <button id="sync">
+              Salvar e sincronizar
+            </button>
+
+          </div>
+
+        </div>
+
+      </section>
+
+
+      <!-- =========================
+           ADMIN
+      ========================== -->
+
+      <section
+        id="admin"
+        class="page hidden"
+      >
+
+        <div class="head">
+
+          <div>
+
+            <small>
+              ADMIN
+            </small>
+
+            <h1>
+              Controle geral
+            </h1>
+
+          </div>
+
+        </div>
+
+
+        <!-- ESTATÍSTICAS ADMIN -->
+
+        <div class="stats">
+
+          <div>
+
+            <span>
+              Usuários
+            </span>
+
+            <b id="au">
+              0
+            </b>
+
+          </div>
+
+
+          <div>
+
+            <span>
+              Atividades
+            </span>
+
+            <b id="at">
+              0
+            </b>
+
+          </div>
+
+        </div>
+
+
+        <!-- USUÁRIOS -->
+
+        <div class="card">
+
+          <h3>
+            Usuários
+          </h3>
+
+          <div id="users"></div>
+
+        </div>
+
+      </section>
+
+    </main>
+
+  </div>
+
+
+  <!-- =========================
+       SCRIPTS
+  ========================== -->
+
+  <script src="js/config.js"></script>
+  <script src="js/app.js"></script>
+
+</body>
+
+</html>
