@@ -482,9 +482,32 @@
         </div>
 
 
-        <!-- ACESSO RÁPIDO -->
+        <!-- RESUMO + ACESSO RÁPIDO -->
 
-        <div class="dashboard-quick">
+        <div class="dashboard-bottom-grid">
+
+          <div class="dashboard-progress-card">
+            <div class="dashboard-progress-top">
+              <div>
+                <span>SEU RITMO</span>
+                <h3>Progresso das atividades</h3>
+              </div>
+              <strong id="dashboard-progress-value">0%</strong>
+            </div>
+
+            <div class="dashboard-progress-track">
+              <span id="dashboard-progress-bar"></span>
+            </div>
+
+            <div class="dashboard-progress-meta">
+              <span id="dashboard-progress-label">Nenhuma atividade cadastrada ainda.</span>
+              <button data-p="tasks">Ver atividades →</button>
+            </div>
+          </div>
+
+          <!-- ACESSO RÁPIDO -->
+
+          <div class="dashboard-quick">
 
           <div>
 
@@ -513,6 +536,8 @@
             </button>
 
           </div>
+
+        </div>
 
         </div>
 
@@ -735,10 +760,26 @@
         </div>
 
 
-        <div class="card calendar">
+        <div class="card calendar calendar-shell">
 
-          <h3 id="month"></h3>
+          <div class="calendar-toolbar">
+            <div class="calendar-month-info">
+              <span>VISÃO MENSAL</span>
+              <h3 id="month"></h3>
+            </div>
 
+            <div class="calendar-controls" aria-label="Controles do calendário">
+              <button type="button" id="calendar-prev" class="calendar-control" aria-label="Mês anterior">
+                <span>‹</span>
+              </button>
+              <button type="button" id="calendar-today" class="calendar-today">Hoje</button>
+              <button type="button" id="calendar-next" class="calendar-control" aria-label="Próximo mês">
+                <span>›</span>
+              </button>
+            </div>
+          </div>
+
+          <div class="calendar-divider"></div>
           <div id="cal"></div>
 
         </div>
@@ -1077,65 +1118,51 @@
         class="page hidden"
       >
 
-        <div class="head">
-
+        <div class="admin-hero">
           <div>
-
-            <small>
-              ADMIN
-            </small>
-
-            <h1>
-              Controle geral
-            </h1>
-
+            <div class="admin-kicker"><span class="admin-status-dot"></span> PAINEL ADMINISTRATIVO</div>
+            <h1>Controle geral</h1>
+            <p>Acompanhe os usuários e o movimento do StudyFlow em um único painel.</p>
           </div>
 
+          <button id="refresh-admin" class="admin-refresh" type="button">
+            <span>↻</span> Atualizar dados
+          </button>
         </div>
 
-
-        <!-- ESTATÍSTICAS ADMIN -->
-
-        <div class="stats">
-
-          <div>
-
-            <span>
-              Usuários
-            </span>
-
-            <b id="au">
-              0
-            </b>
-
+        <div class="admin-stats">
+          <div class="admin-stat-card">
+            <div class="admin-stat-icon purple">◉</div>
+            <div><span>Total de usuários</span><strong id="au">0</strong><small>contas cadastradas</small></div>
           </div>
 
-
-          <div>
-
-            <span>
-              Atividades
-            </span>
-
-            <b id="at">
-              0
-            </b>
-
+          <div class="admin-stat-card">
+            <div class="admin-stat-icon blue">✓</div>
+            <div><span>Alunos</span><strong id="astudents">0</strong><small>usuários estudantes</small></div>
           </div>
 
+          <div class="admin-stat-card">
+            <div class="admin-stat-icon amber">◆</div>
+            <div><span>Administradores</span><strong id="aadmins">0</strong><small>contas com acesso admin</small></div>
+          </div>
+
+          <div class="admin-stat-card">
+            <div class="admin-stat-icon green">▣</div>
+            <div><span>Atividades</span><strong id="at">0</strong><small><span id="apending">0</span> pendentes</small></div>
+          </div>
         </div>
 
+        <div class="admin-content-card">
+          <div class="admin-content-head">
+            <div>
+              <span class="admin-section-label">GESTÃO</span>
+              <h2>Usuários cadastrados</h2>
+              <p>Contas registradas atualmente no StudyFlow.</p>
+            </div>
+            <div class="admin-total-pill"><span id="admin-user-count">0</span> usuários</div>
+          </div>
 
-        <!-- USUÁRIOS -->
-
-        <div class="card">
-
-          <h3>
-            Usuários
-          </h3>
-
-          <div id="users"></div>
-
+          <div id="users" class="admin-users-grid"></div>
         </div>
 
       </section>

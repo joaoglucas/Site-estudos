@@ -764,6 +764,45 @@ function updateDashboardStats() {
     "total",
     activities.length
   );
+
+  // Atualiza o resumo visual do Dashboard
+  const total = activities.length;
+  const completed = done.length;
+  const progress = total > 0
+    ? Math.round((completed / total) * 100)
+    : 0;
+
+  const progressValue = document.getElementById(
+    "dashboard-progress-value"
+  );
+  const progressBar = document.getElementById(
+    "dashboard-progress-bar"
+  );
+  const progressLabel = document.getElementById(
+    "dashboard-progress-label"
+  );
+
+  if (progressValue) {
+    progressValue.textContent = `${progress}%`;
+  }
+
+  if (progressBar) {
+    progressBar.style.width = `${progress}%`;
+  }
+
+  if (progressLabel) {
+    if (total === 0) {
+      progressLabel.textContent = "Nenhuma atividade cadastrada ainda.";
+    } else if (progress === 100) {
+      progressLabel.textContent = "Tudo concluído. Excelente trabalho!";
+    } else if (progress >= 70) {
+      progressLabel.textContent = "Você está indo muito bem. Continue assim!";
+    } else if (progress >= 40) {
+      progressLabel.textContent = "Bom ritmo. Continue avançando!";
+    } else {
+      progressLabel.textContent = `${pending.length} atividade(s) ainda precisam da sua atenção.`;
+    }
+  }
 }
 
 // ============================================================
@@ -1207,38 +1246,31 @@ async function loadAdmin() {
 // ============================================================
 
 async function loadAdminStats() {
-  const {
-    count: userCount,
-    error: userError
-  } = await sb
+  const { data: profiles, error: profileError } = await sb
     .from("profiles")
-    .select("*", {
-      count: "exact",
-      head: true
-    });
+    .select("id, role");
 
-  if (!userError) {
-    setText(
-      "au",
-      userCount || 0
-    );
+  if (!profileError) {
+    const total = profiles?.length || 0;
+    const students = (profiles || []).filter((profile) => profile.role !== "admin").length;
+    const admins = (profiles || []).filter((profile) => profile.role === "admin").length;
+
+    setText("au", total);
+    setText("astudents", students);
+    setText("aadmins", admins);
+    setText("admin-user-count", total);
   }
 
-  const {
-    count: activityCount,
-    error: activityError
-  } = await sb
+  const { data: activityRows, error: activityError } = await sb
     .from("activities")
-    .select("*", {
-      count: "exact",
-      head: true
-    });
+    .select("id, completed");
 
   if (!activityError) {
-    setText(
-      "at",
-      activityCount || 0
-    );
+    const totalActivities = activityRows?.length || 0;
+    const pendingActivities = (activityRows || []).filter((activity) => !activity.completed).length;
+
+    setText("at", totalActivities);
+    setText("apending", pendingActivities);
   }
 }
 
@@ -1273,20 +1305,61 @@ async function loadAdminUsers() {
 
   if (!profiles?.length) {
     container.innerHTML = `<div class="empty-state"><div>👥</div><h3>Nenhum usuário encontrado</h3></div>`;
+    setText("admin-user-count", 0);
     return;
   }
 
-  container.innerHTML = profiles.map((user) => `
-    <div class="admin-user-card">
-      <div class="admin-user-info">
-        <strong>${escapeHTML(user.email || "Sem e-mail")}</strong>
-        <span>${escapeHTML(phones.get(user.id) || "Sem telefone")}</span>
-      </div>
-      <div class="admin-user-role">
-        ${user.role === "admin" ? `<span class="admin-badge">👑 ADMIN</span>` : `<span class="student-badge">🎓 ALUNO</span>`}
-      </div>
-    </div>
-  `).join("");
+  setText("admin-user-count", profiles.length);
+
+  container.innerHTML = profiles.map((profile) => {
+    const email = profile.email || "Sem e-mail";
+    const initials = email.charAt(0).toUpperCase();
+    const isAdmin = profile.role === "admin";
+    const phone = phones.get(profile.id);
+    const created = profile.created_at ? new Date(profile.created_at).toLocaleDateString("pt-BR") : "—";
+
+    return `
+      <article class="admin-user-card">
+        <div class="admin-user-avatar ${isAdmin ? "admin" : ""}">${escapeHTML(initials)}</div>
+        <div class="admin-user-main">
+          <div class="admin-user-top">
+            <strong title="${escapeHTML(email)}">${escapeHTML(email)}</strong>
+            ${isAdmin ? `<span class="admin-badge">ADMIN</span>` : `<span class="student-badge">ALUNO</span>`}
+          </div>
+          <div class="admin-user-meta">
+            <span>📅 Cadastro: ${created}</span>
+            <span>${phone ? `📱 ${escapeHTML(phone)}` : `📱 Sem telefone`}</span>
+          </div>
+        </div>
+        <div class="admin-user-arrow">›</div>
+      </article>
+    `;
+  }).join("");
+}
+
+// ============================================================
+// CONTROLES DO CALENDÁRIO
+// ============================================================
+
+function setupCalendarControls() {
+  const prev = document.getElementById("calendar-prev");
+  const next = document.getElementById("calendar-next");
+  const today = document.getElementById("calendar-today");
+
+  prev?.addEventListener("click", () => {
+    calendarDate = new Date(calendarDate.getFullYear(), calendarDate.getMonth() - 1, 1);
+    renderCalendar();
+  });
+
+  next?.addEventListener("click", () => {
+    calendarDate = new Date(calendarDate.getFullYear(), calendarDate.getMonth() + 1, 1);
+    renderCalendar();
+  });
+
+  today?.addEventListener("click", () => {
+    calendarDate = new Date();
+    renderCalendar();
+  });
 }
 
 // ============================================================
@@ -1937,6 +2010,9 @@ document.addEventListener(
 
     // Configurações
     setupSettings();
+
+    // Calendário
+    setupCalendarControls();
 
 // ===============================
 // MOODLE
